@@ -5,6 +5,7 @@ import org.exception.BillNotFoundException;
 import org.exception.InsufficientFundsException;
 import org.exception.PaymentAlreadyScheduleException;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -26,9 +27,9 @@ public class Main {
                     billManager.listBills();
                     break;
                 case "PAY":
-                    int billId = Integer.parseInt(command[1]);
+                    int[] billIds = getBillsToCommands(command);
                     try {
-                        billManager.pay(billId);
+                        billManager.pay(billIds);
                     } catch (BillNotFoundException e) {
                         System.out.println(e.getMessage());
                     } catch (BillAlreadyPaidException e) {
@@ -67,5 +68,12 @@ public class Main {
                     break;
             }
         }
+    }
+    public static int[] getBillsToCommands(String[] command) {
+        int[] billIds = new int[command.length - 1];
+        for (int i = 1; i < command.length; i++) {
+            billIds[i - 1] = Integer.parseInt(command[i]);
+        }
+        return billIds;
     }
 }

@@ -44,7 +44,8 @@ class BillManagerTest {
             System.out.println(e.getMessage());
             thown = true;
         } catch (BillNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
+            thown = true;
         }
         assertEquals(false, thown);
     }
@@ -57,7 +58,7 @@ class BillManagerTest {
             expected = billManager.getBalance();
             billManager.pay(10);
             assertEquals(expected, billManager.getBalance());
-//            assertEquals("NOT_PAID", billManager.getBillById(10).state);
+            assertEquals("NOT_PAID", billManager.getBillById(10).state);
         } catch (BillNotFoundException e) {
             System.out.println(e.getMessage());
             thrown = true;
@@ -67,6 +68,30 @@ class BillManagerTest {
         } catch (InsufficientFundsException e) {
             System.out.println(e.getMessage());
             thrown = false;
+        }
+        assertEquals(true, thrown);
+    }
+
+    @Test
+    void payMulBillsWithInsufficientFundsException() {
+        payWithoutException();
+        boolean thrown = false;
+        int expected = 0;
+        try {
+            expected = billManager.getBalance();
+            billManager.pay(2, 3);
+            assertEquals(expected, billManager.getBalance());
+            assertEquals("NOT_PAID", billManager.getBillById(2).state);
+            assertEquals("NOT_PAID", billManager.getBillById(3).state);
+        } catch (BillNotFoundException e) {
+            System.out.println(e.getMessage());
+            thrown = false;
+        } catch (BillAlreadyPaidException e) {
+            System.out.println(e.getMessage());
+            thrown = false;
+        } catch (InsufficientFundsException e) {
+            System.out.println(e.getMessage());
+            thrown = true;
         }
         assertEquals(true, thrown);
     }

@@ -43,6 +43,24 @@ class BillManager {
         }
     }
 
+    public void pay(int... billIds) throws BillAlreadyPaidException, InsufficientFundsException, BillNotFoundException {
+        if (billIds.length == 1) {
+            pay(billIds[0]);
+        } else {
+            int totalAmount = 0;
+            for (int id = 0; id < billIds.length; id++) {
+                Bill bill = getBillById(billIds[id]);
+                totalAmount += bill.amount;
+            }
+            if (balance < totalAmount) {
+                throw new InsufficientFundsException();
+            }
+            for (int id = 0; id < billIds.length; id++) {
+                pay(billIds[id]);
+            }
+        }
+    }
+
     public void pay(int billId) throws BillAlreadyPaidException, InsufficientFundsException, BillNotFoundException {
         Bill bill = getBillById(billId);
         if (bill.state.equals("PAID")) {
